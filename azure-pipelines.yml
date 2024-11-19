@@ -8,7 +8,7 @@ pool:
 
 variables:
   TERRAFORM_CLOUD_TOKEN: $(terraformCloudToken)
-  TF_WORKSPACE: your-workspace-name
+  TF_WORKSPACE: $(TF_WORKSPACE)
   AZURE_SUBSCRIPTION_ID: $(azureSubscriptionId)
   AZURE_CLIENT_ID: $(azureClientId)
   AZURE_CLIENT_SECRET: $(azureClientSecret)
@@ -29,13 +29,25 @@ steps:
     displayName: 'Install Terraform'
 
   - script: |
+      if ! command -v az &> /dev/null; then
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      fi
+    displayName: 'Install Azure CLI if not present'
+
+  - script: |
       terraform login --token=$(TERRAFORM_CLOUD_TOKEN)
-      terraform init -backend-config="organization=your-organization-name" -backend-config="workspaces.name=$(TF_WORKSPACE)"
+      terraform init -backend-config="organization=$(TF_Organization)" -backend-config="workspaces.name=$(TF_WORKSPACE)"
+    displayName: 'Terraform Init'
+
+  - script: |
       terraform plan -out=tfplan
+    displayName: 'Terraform Plan'
+
+  - script: |
       terraform apply -input=false tfplan
     displayName: 'Terraform Apply'
     env:
-      ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
       ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
       ARM_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+      ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
       ARM_TENANT_ID: $(AZURE_TENANT_ID)
