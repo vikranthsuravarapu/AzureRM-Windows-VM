@@ -8,7 +8,6 @@ pool:
 
 variables:
   TERRAFORM_CLOUD_TOKEN: $(terraformCloudToken)
-  TF_WORKSPACE: $(TF_WORKSPACE)
   AZURE_SUBSCRIPTION_ID: $(azureSubscriptionId)
   AZURE_CLIENT_ID: $(azureClientId)
   AZURE_CLIENT_SECRET: $(azureClientSecret)
