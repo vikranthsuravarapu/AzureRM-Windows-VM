@@ -36,7 +36,7 @@ steps:
 
   - script: |
       terraform login --token=$(TERRAFORM_CLOUD_TOKEN)
-      terraform init -backend-config="organization=$(TF_Organization)" -backend-config="workspaces.name=$(TF_WORKSPACE)"
+      terraform init
     displayName: 'Terraform Init'
 
   - script: |
