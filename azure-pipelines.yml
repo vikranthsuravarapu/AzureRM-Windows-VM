@@ -1,0 +1,41 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  TERRAFORM_CLOUD_TOKEN: $(terraformCloudToken)
+  TF_WORKSPACE: your-workspace-name
+  AZURE_SUBSCRIPTION_ID: $(azureSubscriptionId)
+  AZURE_CLIENT_ID: $(azureClientId)
+  AZURE_CLIENT_SECRET: $(azureClientSecret)
+  AZURE_TENANT_ID: $(azureTenantId)
+
+steps:
+  - checkout: self
+
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.x'
+      addToPath: true
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install terraform
+      terraform -version
+    displayName: 'Install Terraform'
+
+  - script: |
+      terraform login --token=$(TERRAFORM_CLOUD_TOKEN)
+      terraform init -backend-config="organization=your-organization-name" -backend-config="workspaces.name=$(TF_WORKSPACE)"
+      terraform plan -out=tfplan
+      terraform apply -input=false tfplan
+    displayName: 'Terraform Apply'
+    env:
+      ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+      ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
+      ARM_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+      ARM_TENANT_ID: $(AZURE_TENANT_ID)
