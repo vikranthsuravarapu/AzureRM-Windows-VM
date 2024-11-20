@@ -34,7 +34,9 @@ steps:
     displayName: 'Install Azure CLI if not present'
 
   - script: |
-      echo $TERRAFORM_CLOUD_TOKEN | terraform login --token-stdin
+      echo "{\"credentials\":{\"app.terraform.io\":{\"token\":\"$TERRAFORM_CLOUD_TOKEN\"}}}" > /home/vsts/.terraform.d/credentials.tfrc.json
+      cat /home/vsts/.terraform.d/credentials.tfrc.json  # Print to verify correct token usage
+      terraform login --token=$TERRAFORM_CLOUD_TOKEN
       terraform init
     displayName: 'Terraform Init'
     env:
