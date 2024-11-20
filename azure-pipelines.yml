@@ -7,7 +7,6 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  terraformCloudToken: $(terraformCloudToken)
   AZURE_SUBSCRIPTION_ID: $(azureSubscriptionId)
   AZURE_CLIENT_ID: $(azureClientId)
   AZURE_CLIENT_SECRET: $(azureClientSecret)
@@ -34,14 +33,12 @@ steps:
     displayName: 'Install Azure CLI if not present'
 
   - script: |
-      echo $TERRAFORM_CLOUD_TOKEN > /tmp/tf_token.txt
-      echo "{\"credentials\":{\"app.terraform.io\":{\"token\":\"$TERRAFORM_CLOUD_TOKEN\"}}}" > ~/.terraform.d/credentials.tfrc.json
-      cat /tmp/tf_token.txt
+      echo "Token: $(terraformCloudToken)"  # Print full token for verification
+      mkdir -p ~/.terraform.d
+      echo "{\"credentials\":{\"app.terraform.io\":{\"token\":\"$(terraformCloudToken)\"}}}" > ~/.terraform.d/credentials.tfrc.json
       cat ~/.terraform.d/credentials.tfrc.json  # Print credentials file for verification
       terraform init
     displayName: 'Terraform Init'
-    env:
-      TERRAFORM_CLOUD_TOKEN: $(terraformCloudToken)
 
   - script: |
       terraform plan -out=tfplan
