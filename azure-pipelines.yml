@@ -8,9 +8,18 @@ pool:
 
 variables:
   terraformCloudToken: $(terraformCloudToken)
+  AZURE_SUBSCRIPTION_ID: $(azureSubscriptionId)
+  AZURE_CLIENT_ID: $(azureClientId)
+  AZURE_CLIENT_SECRET: $(azureClientSecret)
+  AZURE_TENANT_ID: $(azureTenantId)
 
 steps:
   - checkout: self
+
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.x'
+      addToPath: true
 
   - script: |
       python -m pip install --upgrade pip
@@ -19,10 +28,16 @@ steps:
     displayName: 'Install Terraform'
 
   - script: |
-      echo "Token: $TERRAFORM_CLOUD_TOKEN"  # Print full token for verification
-      mkdir -p ~/.terraform.d
+      if ! command -v az &> /dev/null; then
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      fi
+    displayName: 'Install Azure CLI if not present'
+
+  - script: |
+      echo $TERRAFORM_CLOUD_TOKEN > /tmp/tf_token.txt
       echo "{\"credentials\":{\"app.terraform.io\":{\"token\":\"$TERRAFORM_CLOUD_TOKEN\"}}}" > ~/.terraform.d/credentials.tfrc.json
-      cat ~/.terraform.d/credentials.tfrc.json  # Verify the token is correctly written
+      cat /tmp/tf_token.txt
+      cat ~/.terraform.d/credentials.tfrc.json  # Print credentials file for verification
       terraform init
     displayName: 'Terraform Init'
     env:
