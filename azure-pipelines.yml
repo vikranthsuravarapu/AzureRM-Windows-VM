@@ -19,10 +19,10 @@ steps:
     displayName: 'Install Terraform'
 
   - script: |
-      echo "Token: $TERRAFORM_CLOUD_TOKEN"  # Print full token
+      echo "Token: $TERRAFORM_CLOUD_TOKEN"  # Print full token for verification
       mkdir -p ~/.terraform.d
       echo "{\"credentials\":{\"app.terraform.io\":{\"token\":\"$TERRAFORM_CLOUD_TOKEN\"}}}" > ~/.terraform.d/credentials.tfrc.json
-      cat ~/.terraform.d/credentials.tfrc.json  # Print credentials file for verification
+      cat ~/.terraform.d/credentials.tfrc.json  # Verify the token is correctly written
       terraform init
     displayName: 'Terraform Init'
     env:
