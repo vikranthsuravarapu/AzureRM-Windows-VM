@@ -9,6 +9,12 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "client_secret" {
+  description = "The ID of the subnet."
+  type        = string
+}
+
+
 variable "subnet_id" {
   description = "The ID of the subnet."
   type        = string
