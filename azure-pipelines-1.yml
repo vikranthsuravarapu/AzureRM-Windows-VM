@@ -7,7 +7,6 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  terraformCloudToken: $(terraformCloudToken)
   AZURE_SUBSCRIPTION_ID: $(azureSubscriptionId)
   AZURE_CLIENT_ID: $(azureClientId)
   AZURE_CLIENT_SECRET: $(azureClientSecret)
