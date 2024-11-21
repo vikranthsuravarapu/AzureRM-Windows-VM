@@ -37,9 +37,10 @@ jobs:
         displayName: 'Install Azure CLI if not present'
 
       - script: |
-          echo "Token: $(terraformCloudToken)"  # Print full token for verification
+          export TERRAFORM_CLOUD_TOKEN=$(terraformCloudToken)
           mkdir -p ~/.terraform.d
-          echo "{\"credentials\":{\"app.terraform.io\":{\"token\":\"$(terraformCloudToken)\"}}}" > ~/.terraform.d/credentials.tfrc.json
+          echo "{\"credentials\":{\"app.terraform.io\":{\"token\":\"$TERRAFORM_CLOUD_TOKEN\"}}}" > ~/.terraform.d/credentials.tfrc.json
+          sleep 5  # Wait for 5 seconds to ensure the file is properly saved
           cat ~/.terraform.d/credentials.tfrc.json  # Print credentials file for verification
           terraform init
         displayName: 'Terraform Init'
