@@ -45,7 +45,7 @@ steps:
     displayName: 'Terraform Plan'
 
   - script: |
-      terraform apply -input=false tfplan
+      terraform destroy -input=false tfplan
     displayName: 'Terraform Apply'
     env:
       ARM_CLIENT_ID: $(azureClientId)
